@@ -23,16 +23,16 @@ model User {
 model Item {
   id String @id @default(uuid())
   name String 
-  stock WarehouseItem[]
+  stock Inventory[]
 }
 
 model Warehouse {
   id String @id @default(uuid())
   name String
-  items WarehouseItem[] 
+  items Inventory[] 
 }
 
-model WarehouseItem {
+model Inventory {
   warehouseId String 
   warehouse Warehouse @relation(fields: [warehouseId], references: [id])
   itemId String 

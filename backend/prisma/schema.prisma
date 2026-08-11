@@ -13,7 +13,7 @@ datasource db {
 }
 
 model User {
-  id String @unique @default(@uuid)
+  id String @id @default(uuid())
   name String
   email String @unique
   password String
@@ -21,12 +21,22 @@ model User {
 }
 
 model Item {
-  id String @unique @default(@uuid)
+  id String @id @default(uuid())
   name String 
+  stock WarehouseItem[]
 }
 
 model Warehouse {
-  id String @unique @default(@uuid)
+  id String @id @default(uuid())
   name String
-  goodsList 
+  items WarehouseItem[] 
+}
+
+model WarehouseItem {
+  warehouseId String 
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id])
+  itemId String 
+  item Item @relation(fields: [itemId], references: [id])
+  quantity Int
+  @@id([warehouseId, itemId])
 }

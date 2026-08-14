@@ -1,19 +1,19 @@
 import type { ItemDTO } from "./itemSchema";
 import type { InventoryDTO } from "../inventory/inventorySchema";
 import { prisma } from "../../config/prisma";
+import { itemRepository } from "./itemRepository";
+import { inventoryRepository } from "../inventory/inventoryRepository";
 
 export const itemService = {
     async create(itemData: ItemDTO, inventories: InventoryDTO[]) {
         if (!itemData || !inventories?.length) return { error: 'Data not provided' };
 
         return await prisma.$transaction(async (tx) => {
-            const item = await tx.item.create({ data: { name: itemData.name } });
+            const item = await itemRepository.create(tx, { name: itemData.name });
 
             const createdInventories = [];
             for (const inv of inventories) {
-                const inventory = await tx.inventory.create({
-                    data: { itemId: item.id, warehouseId: inv.warehouseId!, quantity: inv.quantity }
-                });
+                const inventory = await inventoryRepository.create(tx, item.id, { warehouseId: inv.warehouseId, quantity: inv.quantity });
                 createdInventories.push(inventory);
             }
 

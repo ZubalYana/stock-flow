@@ -1,9 +1,11 @@
 import type { InventoryDTO } from "./inventorySchema";
 import { prisma } from "../../config/prisma";
+import type { Prisma } from "../../generated/prisma/client" 
+
 
 export const inventoryRepository = {
-    async create(itemId: string, warehouseId: string, data: InventoryDTO){
-        return await prisma.inventory.create({data: {itemId, warehouseId, quantity: data.quantity}})
+    async create(client: Prisma.TransactionClient, itemId: string, data: InventoryDTO){
+        return await client.inventory.create({data: {itemId, warehouseId: data.warehouseId, quantity: data.quantity}})
     },
     async update(itemId: string, warehouseId: string, data: InventoryDTO){
         return await prisma.inventory.update({where: {warehouseId_itemId: {warehouseId, itemId}}, data: {quantity: data.quantity}})

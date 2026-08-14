@@ -1,9 +1,9 @@
 import { prisma } from "../../config/prisma"
 import type { ItemDTO } from "./itemSchema"
-
+import type { Prisma } from "../../generated/prisma/client" 
 export const itemRepository = {
-    async create(data: ItemDTO){
-        return await prisma.item.create({data: {name: data.name}})
+    async create(client: Prisma.TransactionClient, data: ItemDTO){
+        return await client.item.create({data: {name: data.name}})
     },
     async update(id: string, data: ItemDTO){
         return await prisma.item.update({where: {id}, data: {name: data.name}})

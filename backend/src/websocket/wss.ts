@@ -3,6 +3,7 @@ import type { WebSocket } from "ws";
 import type { Server } from "http";
 import { ClientMessageSchema } from "./schemas";
 import { transferService } from "../features/transfer/transferService";
+import jwt from 'jsonwebtoken';
 
 const warehouseWatcher = new Map<string, Set<WebSocket>>();
 
@@ -10,6 +11,8 @@ export function attachWebSocket(server: Server) {
   const wss = new WebSocketServer({ server });
   wss.on("connection", (socket: WebSocket) => {
     console.log("Connection established");
+
+    let user: { id: string, email: string } | null = null;
 
     socket.on("message", async (raw) => {
       let parsed;
@@ -29,6 +32,23 @@ export function attachWebSocket(server: Server) {
       }
 
       const msg = result.data;
+
+       if (msg.type === 'AUTH') {
+      try {
+        const payload = jwt.verify(msg.token, process.env.JWT_SECRET!) as { id: string; email: string };
+        user = payload;
+        socket.send(JSON.stringify({ type: 'AUTH_OK' }));
+      } catch {
+        socket.send(JSON.stringify({ type: 'ERROR', message: 'Invalid token' }));
+        socket.close();
+      }
+      return;
+    }
+
+    if (!user) {
+      socket.send(JSON.stringify({ type: 'ERROR', message: 'Not authenticated' }));
+      return;
+    }
 
       switch (msg.type) {
         case "WATCH_WAREHOUSE":

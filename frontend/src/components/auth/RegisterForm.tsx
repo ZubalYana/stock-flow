@@ -70,7 +70,7 @@ export default function RegisterForm() {
           marginTop: 4,
         }}
       >
-        Ready to kick off your next vacation?
+        Want to track down your warehouses?
       </p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 16, margin: "24px 0" }}>

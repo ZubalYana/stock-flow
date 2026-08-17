@@ -17,7 +17,6 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
   const addAlert = useAlertStore((state) => state.addAlert);
   const setAuth = useAuthStore((state) => state.setAuth);
   const navigate = useNavigate();
@@ -44,28 +43,6 @@ export default function LoginForm() {
     }
   }
 
-  async function forgotPassword() {
-    if (!email) {
-      addAlert({ severity: "error", message: "Enter your email" });
-      return;
-    }
-    try {
-      setLoading(true);
-      const res = await apiFetch(
-        "/auth/forgot-password",
-        { method: "POST", body: JSON.stringify({ email }) },
-        false
-      );
-      await res.json();
-      addAlert({ severity: "success", message: "Password reset link sent to your email" });
-    } catch (err) {
-      console.error(err);
-      const message = err instanceof Error ? err.message : "Something went wrong";
-      addAlert({ severity: "error", message });
-    } finally {
-      setLoading(false);
-    }
-  }
 
   return (
     <div
@@ -99,7 +76,7 @@ export default function LoginForm() {
           marginTop: 4,
         }}
       >
-        Log in to keep planning your trips
+        Log in to sort out the warehouses?
       </p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 16, margin: "24px 0" }}>
@@ -109,7 +86,6 @@ export default function LoginForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        {!forgotPasswordMode && (
           <TextField
             label="Password"
             size="small"
@@ -128,10 +104,9 @@ export default function LoginForm() {
               },
             }}
           />
-        )}
       </div>
 
-      {!forgotPasswordMode ? (
+
         <Button
           fullWidth
           variant="contained"
@@ -145,21 +120,7 @@ export default function LoginForm() {
         >
           Log in
         </Button>
-      ) : (
-        <Button
-          fullWidth
-          variant="contained"
-          disabled={!email || loading}
-          onClick={forgotPassword}
-          startIcon={loading ? <CircularProgress size={16} color="inherit" /> : undefined}
-          sx={{
-            bgcolor: "#101828",
-            "&:hover": { bgcolor: "#1D2939" },
-          }}
-        >
-          Send reset link
-        </Button>
-      )}
+      
 
       <p style={{ fontSize: 14, color: "#64748B", textAlign: "center", marginTop: 16 }}>
         Don't have an account?{" "}
@@ -168,29 +129,6 @@ export default function LoginForm() {
         </a>
       </p>
 
-      <p style={{ fontSize: 12, color: "#64748B", textAlign: "center", marginTop: 12 }}>
-        {!forgotPasswordMode ? (
-          <>
-            Forgot password?{" "}
-            <button
-              onClick={() => setForgotPasswordMode(true)}
-              style={{ color: "#101828", fontWeight: 500, background: "none", border: "none", cursor: "pointer", padding: 0 }}
-            >
-              Reset
-            </button>
-          </>
-        ) : (
-          <>
-            Remembered password?{" "}
-            <button
-              onClick={() => setForgotPasswordMode(false)}
-              style={{ color: "#101828", fontWeight: 500, background: "none", border: "none", cursor: "pointer", padding: 0 }}
-            >
-              Log in
-            </button>
-          </>
-        )}
-      </p>
     </div>
   );
 }

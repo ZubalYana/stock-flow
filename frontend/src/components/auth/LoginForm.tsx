@@ -1,11 +1,9 @@
 import { useState } from "react";
 import {
-  Box,
   Button,
   IconButton,
   InputAdornment,
   TextField,
-  Typography,
   CircularProgress,
 } from "@mui/material";
 import { Visibility, VisibilityOff, Login } from "@mui/icons-material";
@@ -70,31 +68,41 @@ export default function LoginForm() {
   }
 
   return (
-    <Box
-      sx={{
+    <div
+      style={{
         width: "100%",
         maxWidth: 340,
-        bgcolor: "#FFFFFF",
-        borderRadius: 2,
-        boxShadow: 3,
-        p: { xs: 3, md: 4 },
+        background: "#FFFFFF",
+        borderRadius: 8,
+        boxShadow: "0 4px 12px rgba(16,24,40,0.1)",
+        padding: 32,
       }}
     >
-      <Typography
-        variant="h5"
-        align="center"
-        sx={{ fontFamily: "Outfit, sans-serif", fontWeight: 600, color: "#101828" }}
+      <h1
+        style={{
+          fontFamily: "Outfit, sans-serif",
+          fontWeight: 600,
+          fontSize: 24,
+          color: "#101828",
+          textAlign: "center",
+          margin: 0,
+        }}
       >
         Welcome back
-      </Typography>
-      <Typography
-        align="center"
-        sx={{ fontFamily: "'Open Sans', sans-serif", fontSize: 14, color: "#64748B", mt: 0.5 }}
+      </h1>
+      <p
+        style={{
+          fontFamily: "'Open Sans', sans-serif",
+          fontSize: 14,
+          color: "#64748B",
+          textAlign: "center",
+          marginTop: 4,
+        }}
       >
         Log in to keep planning your trips
-      </Typography>
+      </p>
 
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2, my: 3 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 16, margin: "24px 0" }}>
         <TextField
           label="Email"
           size="small"
@@ -121,7 +129,7 @@ export default function LoginForm() {
             }}
           />
         )}
-      </Box>
+      </div>
 
       {!forgotPasswordMode ? (
         <Button
@@ -130,6 +138,10 @@ export default function LoginForm() {
           disabled={disabled || loading}
           onClick={login}
           startIcon={loading ? <CircularProgress size={16} color="inherit" /> : <Login fontSize="small" />}
+          sx={{
+            bgcolor: "#101828",
+            "&:hover": { bgcolor: "#1D2939" },
+          }}
         >
           Log in
         </Button>
@@ -140,43 +152,45 @@ export default function LoginForm() {
           disabled={!email || loading}
           onClick={forgotPassword}
           startIcon={loading ? <CircularProgress size={16} color="inherit" /> : undefined}
+          sx={{
+            bgcolor: "#101828",
+            "&:hover": { bgcolor: "#1D2939" },
+          }}
         >
           Send reset link
         </Button>
       )}
 
-      <Typography align="center" sx={{ fontSize: 14, color: "#64748B", mt: 2 }}>
+      <p style={{ fontSize: 14, color: "#64748B", textAlign: "center", marginTop: 16 }}>
         Don't have an account?{" "}
-        <Box component="a" href="/register" sx={{ color: "primary.main", fontWeight: 500, textDecoration: "none" }}>
+        <a href="/register" style={{ color: "#101828", fontWeight: 500, textDecoration: "none" }}>
           Sign up
-        </Box>
-      </Typography>
+        </a>
+      </p>
 
-      <Typography align="center" sx={{ fontSize: 12, color: "#64748B", mt: 1.5 }}>
+      <p style={{ fontSize: 12, color: "#64748B", textAlign: "center", marginTop: 12 }}>
         {!forgotPasswordMode ? (
           <>
             Forgot password?{" "}
-            <Box
-              component="button"
+            <button
               onClick={() => setForgotPasswordMode(true)}
-              sx={{ color: "primary.main", fontWeight: 500, background: "none", border: "none", cursor: "pointer", p: 0 }}
+              style={{ color: "#101828", fontWeight: 500, background: "none", border: "none", cursor: "pointer", padding: 0 }}
             >
               Reset
-            </Box>
+            </button>
           </>
         ) : (
           <>
             Remembered password?{" "}
-            <Box
-              component="button"
+            <button
               onClick={() => setForgotPasswordMode(false)}
-              sx={{ color: "primary.main", fontWeight: 500, background: "none", border: "none", cursor: "pointer", p: 0 }}
+              style={{ color: "#101828", fontWeight: 500, background: "none", border: "none", cursor: "pointer", padding: 0 }}
             >
               Log in
-            </Box>
+            </button>
           </>
         )}
-      </Typography>
-    </Box>
+      </p>
+    </div>
   );
 }

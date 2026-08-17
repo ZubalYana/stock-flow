@@ -34,7 +34,7 @@ export default function LoginForm() {
       );
       const data = await res.json();
       setAuth(data.data.token, data.data.user);
-      navigate("/trips");
+      navigate("/goods");
     } catch (err) {
       console.error(err);
       const message = err instanceof Error ? err.message : "Something went wrong";

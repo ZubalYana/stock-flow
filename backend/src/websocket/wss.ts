@@ -3,16 +3,31 @@ import type { WebSocket } from "ws";
 import type { Server } from "http";
 import { ClientMessageSchema } from "./schemas";
 import { transferService } from "../features/transfer/transferService";
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 const warehouseWatcher = new Map<string, Set<WebSocket>>();
+
+function broadcastPresence(warehouseId: string) {
+  const watchers = warehouseWatcher.get(warehouseId);
+  if (!watchers) return;
+  const operators = Array.from(watchers.values());
+
+  const payload = JSON.stringify({
+    type: "PRESENCE",
+    warehouseId,
+    count: operators.length,
+    operators,
+  });
+
+  for (const s of watchers.keys()) s.send(payload);
+}
 
 export function attachWebSocket(server: Server) {
   const wss = new WebSocketServer({ server });
   wss.on("connection", (socket: WebSocket) => {
     console.log("Connection established");
 
-    let user: { id: string, email: string } | null = null;
+    let user: { id: string; email: string } | null = null;
 
     socket.on("message", async (raw) => {
       let parsed;
@@ -33,22 +48,29 @@ export function attachWebSocket(server: Server) {
 
       const msg = result.data;
 
-       if (msg.type === 'AUTH') {
-      try {
-        const payload = jwt.verify(msg.token, process.env.JWT_SECRET!) as { id: string; email: string };
-        user = payload;
-        socket.send(JSON.stringify({ type: 'AUTH_OK' }));
-      } catch {
-        socket.send(JSON.stringify({ type: 'ERROR', message: 'Invalid token' }));
-        socket.close();
+      if (msg.type === "AUTH") {
+        try {
+          const payload = jwt.verify(msg.token, process.env.JWT_SECRET!) as {
+            id: string;
+            email: string;
+          };
+          user = payload;
+          socket.send(JSON.stringify({ type: "AUTH_OK" }));
+        } catch {
+          socket.send(
+            JSON.stringify({ type: "ERROR", message: "Invalid token" })
+          );
+          socket.close();
+        }
+        return;
       }
-      return;
-    }
 
-    if (!user) {
-      socket.send(JSON.stringify({ type: 'ERROR', message: 'Not authenticated' }));
-      return;
-    }
+      if (!user) {
+        socket.send(
+          JSON.stringify({ type: "ERROR", message: "Not authenticated" })
+        );
+        return;
+      }
 
       switch (msg.type) {
         case "WATCH_WAREHOUSE":
@@ -56,6 +78,7 @@ export function attachWebSocket(server: Server) {
             warehouseWatcher.set(msg.warehouseId, new Set());
           }
           warehouseWatcher.get(msg.warehouseId)!.add(socket);
+          broadcastPresence(msg.warehouseId);
           break;
 
         case "TRANSFER": {
@@ -76,8 +99,8 @@ export function attachWebSocket(server: Server) {
               result,
             });
 
-            for (const s of fromWatchers) s.send(update);
-            for (const s of toWatchers) s.send(update);
+            for (const s of fromWatchers.keys()) s.send(update);
+            for (const s of toWatchers.keys()) s.send(update);
           } catch (err) {
             socket.send(
               JSON.stringify({ type: "ERROR", message: (err as Error).message })
@@ -87,10 +110,12 @@ export function attachWebSocket(server: Server) {
       }
     });
     socket.on("close", () => {
-        for ( const watchers of warehouseWatcher.values()){
-            watchers.delete(socket)
+      for (const [warehouseId, watchers] of warehouseWatcher.entries()) {
+        if (watchers.delete(socket)) {
+          broadcastPresence(warehouseId);
         }
-        console.log("Connection ended")
+      }
+      console.log("Connection ended");
     });
   });
   return wss;

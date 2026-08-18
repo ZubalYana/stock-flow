@@ -13,6 +13,7 @@ export default function GoodsPage(){
     const addAlert = useAlertStore((state)=>(state.addAlert))
 
     async function fetchGoods(){
+        try{
         const res = await apiFetch('/items', {
             method: 'GET',
             headers: {
@@ -23,6 +24,10 @@ export default function GoodsPage(){
         const data = await res.json();
         console.log('data:', data)
         setItems(data.result)
+    }catch(err){
+        console.error(err)
+        addAlert({severity: 'error', message: err.message})
+    }
     }
 
     useEffect(()=>{

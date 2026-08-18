@@ -1,6 +1,8 @@
 export interface Inventory{
     warehouseId: string;
     itemId?: string;
+    warehouse?: Warehouse;
+    item?: Item;
     quantity: number;
 }
 

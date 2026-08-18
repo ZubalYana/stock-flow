@@ -41,7 +41,7 @@ export const inventoryRepository = {
     return await client.inventory.findMany({ where: { itemId } });
   },
   async getAll(client: Prisma.TransactionClient) {
-    return await client.inventory.findMany();
+    return await client.inventory.findMany({include: {item: true, warehouse: true}});
   },
   async decrementIfSufficient(
     client: Prisma.TransactionClient,

@@ -35,7 +35,6 @@ export async function createItem(req: Request, res: Response) {
 export async function updateItem(req: Request, res: Response) {
     try{
         const itemId = req.params.itemId as string;
-        if(!itemId) return { error: 'Item id not found '}
         const data = req.body;
         const itemResult = ItemSchema.safeParse(data);
         if(!itemResult.success){
@@ -52,7 +51,6 @@ export async function updateItem(req: Request, res: Response) {
 export async function deleteItem(req: Request, res: Response) {
     try{
         const itemId = req.params.itemId as string;
-        if(!itemId) return { error: 'Item id not found '}
         const result = await itemService.delete(itemId);
         return res.status(200).json({result});
     }catch(err){
@@ -64,7 +62,6 @@ export async function deleteItem(req: Request, res: Response) {
 export async function getById(req: Request, res: Response){
     try{
         const itemId = req.params.itemId as string;
-        if(!itemId) return { error: 'Item id not found'}
         const result = await itemService.getById(itemId);
         return res.status(200).json({result})
     }catch(err){

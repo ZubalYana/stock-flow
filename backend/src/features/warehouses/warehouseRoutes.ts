@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { createWarehouse, updateWarehouse, deleteWarehouse, getById, getAll } from "./warehouseController";
+import authMiddleware from "../../middleware/authMiddleware";
 const router = Router()
 
-router.post('/', createWarehouse);
-router.patch('/:id', updateWarehouse);
-router.delete('/:id', deleteWarehouse);
-router.get('/:id', getById);
-router.get('/', getAll);
+router.post('/', authMiddleware, createWarehouse);
+router.patch('/:id', authMiddleware, updateWarehouse);
+router.delete('/:id', authMiddleware, deleteWarehouse);
+router.get('/:id', authMiddleware, getById);
+router.get('/', authMiddleware, getAll);
 
 export default router;

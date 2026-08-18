@@ -20,5 +20,19 @@ export const itemService = {
             return { item, inventories: createdInventories };
         });
     },
-    async update(data: ItemDTO) {}
+    async update(itemId: string, data: ItemDTO) {
+        if (!itemId || !data) return { error: 'Lacking credentials' };
+        return await itemRepository.update(prisma, itemId, data);
+    },
+    async delete(itemId: string){
+        if(!itemId) return { error: 'Item id not found'};
+        return await itemRepository.delete(prisma, itemId)
+    },
+    async getById(itemId: string){
+        if(!itemId) return { error: 'Item id not found'};
+        return await itemRepository.getById(prisma, itemId)
+    },
+    async getAll(){
+        return await itemRepository.getAll(prisma);
+    }
 };

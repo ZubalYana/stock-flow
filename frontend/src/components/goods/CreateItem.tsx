@@ -46,6 +46,7 @@ export default function CreateItem({onClose, onSuccess}: CreateItemProps){
         });
 
         const data = await res.json();
+        console.log(data)
         onSuccess();
         setItemName('');
         setQuantities({});
@@ -87,14 +88,20 @@ export default function CreateItem({onClose, onSuccess}: CreateItemProps){
                     {warehouses.map((warehouse) => (
                         <div key={warehouse.id} className="flex items-center justify-between gap-3">
                             <span className="text-sm text-slate-600 truncate">{warehouse.name}</span>
-                            <Input
-                                type="number"
-                                size="small"
-                                className="w-24"
-                                placeholder="0"
-                                value={quantities[warehouse.id] ?? ''}
-                                onChange={(e) => handleQuantityChange(warehouse.id, e.target.value)}
-                            />
+<Input
+    type="number"
+    size="small"
+    className="w-24"
+    placeholder="0"
+    value={quantities[warehouse.id] ?? ''}
+    inputProps={{ min: 0 }} 
+    onKeyDown={(e) => {
+        if (e.key === '-' || e.key === 'e') {
+            e.preventDefault();
+        }
+    }}
+    onChange={(e) => handleQuantityChange(warehouse.id, e.target.value)}
+/>
                         </div>
                     ))}
                 </div>

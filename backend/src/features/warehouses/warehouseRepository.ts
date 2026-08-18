@@ -15,6 +15,6 @@ export const warehouseRepository = {
         return await client.warehouse.findUnique({where: { id: warehouseId}})
     },
     async getAll(client: Prisma.TransactionClient){
-        return await client.warehouse.findMany()
+        return await client.warehouse.findMany({include: {items: true}})
     }
 }

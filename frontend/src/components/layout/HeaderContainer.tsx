@@ -20,7 +20,7 @@ export default function HeaderContainer() {
 
         <div className="relative w-75 h-11 flex items-center bg-white rounded-xl shadow-sm p-1">
           <div
-            className="absolute top-1 left-1 h-[calc(100%-8px)] w-[calc(50%-4px)] rounded-lg bg-slate-900 transition-transform duration-300 ease-out"
+            className="absolute top-1 left-1 h-[calc(100%-8px)] w-[calc(50%-8px)] rounded-lg bg-slate-900 transition-transform duration-300 ease-out"
             style={{
               transform: `translateX(${activeIndex === 1 ? "calc(100% + 8px)" : "0px"})`,
             }}

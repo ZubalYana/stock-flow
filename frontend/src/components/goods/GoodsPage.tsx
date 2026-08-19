@@ -31,6 +31,23 @@ export default function GoodsPage() {
         }
     }
 
+    async function onDelete(itemId: string, itemName: string){
+        try{
+            const res = await apiFetch(`/items/${itemId}`, {
+                method: 'DELETE', 
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            const data = await res.json();
+            console.log(data)
+            addAlert({severity: 'success', message: `${itemName} deleted succesfully`})
+        }catch(err){
+            const message = err instanceof Error? err.message : 'Unknown error';
+            addAlert({severity: 'error', message: message})
+        }
+    }
+
     useEffect(() => {
         fetchGoods();
     }, []);
@@ -51,7 +68,7 @@ export default function GoodsPage() {
             ) : (
                 <div className="flex flex-wrap gap-4">
                     {items.map((item) => (
-                        <ItemCard key={item.id} item={item} />
+                        <ItemCard key={item.id} item={item} onDelete={(itemId, itemName)=>onDelete(itemId, itemName)} />
                     ))}
                 </div>
             )}

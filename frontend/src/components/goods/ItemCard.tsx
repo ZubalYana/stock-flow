@@ -1,12 +1,19 @@
 import type { Item } from "../../types";
+import { Trash2 } from "lucide-react";
 
 interface ItemProps {
     item: Item;
+    onDelete: (itemId: string, itemName: string)=>void;
 }
 
-export default function ItemCard({ item }: ItemProps) {
+export default function ItemCard({ item, onDelete }: ItemProps) {
     return (
-        <div className="w-full sm:w-72 bg-white shadow-sm rounded-xl p-4 hover:shadow-md transition-shadow">
+        <div className="w-full sm:w-72 bg-white shadow-sm rounded-xl p-4 hover:shadow-md transition-shadow relative">
+            <Trash2 
+            size={18} 
+            className="text-red-800 absolute cursor-pointer top-4 right-4"
+            onClick={()=>onDelete(item.id, item.name)}
+            />
             <h2 className="font-medium text-slate-800 mb-2 truncate">{item.name}</h2>
             <div className="flex flex-col gap-1">
                 {item.stock?.length ? (

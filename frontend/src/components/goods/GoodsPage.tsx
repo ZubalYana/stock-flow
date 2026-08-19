@@ -61,18 +61,6 @@ export default function GoodsPage() {
     }
   }
 
-  function updateItemStock(item: Item, result: any): Item {
-    if (item.id !== result.itemId) return item;
-    const newStock = item.stock.map((s) => {
-      if (s.warehouseId === result.from)
-        return { ...s, quantity: s.quantity - result.amount };
-      if (s.warehouseId === result.to)
-        return { ...s, quantity: s.quantity + result.amount };
-      return s;
-    });
-    return { ...item, stock: newStock };
-  }
-
   useEffect(() => {
     fetchGoods();
   }, []);

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { apiFetch } from "../../api/apiFetch";
-import { useAuthStore } from "../../store/authStore";
-import type { Warehouse } from '../../types';
+import { apiFetch } from "../api/apiFetch";
+import { useAuthStore } from "../store/authStore";
+import type { Warehouse } from '../types';
 
 export default function useWarehouses() {
     const token = useAuthStore((state) => state.token);

@@ -8,7 +8,7 @@ import { Input, Button } from "@mui/material";
 import { apiFetch } from "../../api/apiFetch";
 import { useAuthStore } from "../../store/authStore";
 import { useAlertStore } from "../../store/alertStore";
-import useWarehouses from "../warehouses/useWarehouses";
+import useWarehouses from "../../hooks/useWarehouses";
 import type { Inventory } from "../../types";
 
 export default function CreateItem({onClose, onSuccess}: CreateItemProps){

@@ -6,7 +6,7 @@ import CreateWarehouse from './CreateWarehouse';
 import EditWarehouse from './EditWarehouse';
 import { Button } from '@mui/material';
 import WarehouseCard from './WarehouseCard';
-import useWarehouses from './useWarehouses';
+import useWarehouses from '../../hooks/useWarehouses';
 
 export default function WarehousesPage() {
     const [creationMode, setCreationMode] = useState<boolean>(false);

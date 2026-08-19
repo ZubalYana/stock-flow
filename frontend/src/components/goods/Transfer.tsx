@@ -13,7 +13,7 @@ import { apiFetch } from "../../api/apiFetch";
 import { useAuthStore } from "../../store/authStore";
 import { useAlertStore } from "../../store/alertStore";
 import type { Warehouse } from "../../types";
-import useWarehouses from "../warehouses/useWarehouses";
+import useWarehouses from "../../hooks/useWarehouses";
 
 interface TransferItemProps {
   onClose: () => void;

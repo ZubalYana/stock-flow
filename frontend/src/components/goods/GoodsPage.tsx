@@ -89,7 +89,10 @@ export default function GoodsPage() {
             <ItemCard
               key={item.id}
               item={item}
-              onDelete={(itemId, itemName) => onDelete(itemId, itemName)}
+              onDelete={(itemId, itemName) => {
+                onDelete(itemId, itemName)
+                setItems((prev) => prev.filter((d) => d.id !== itemId));
+              }}
               onEdit={(itemId, itemName) => {
                 setEditingItem({ itemId, itemName });
                 setEditingMode(true);

@@ -21,7 +21,11 @@ interface TransferItemProps {
   item: Item;
 }
 
-export default function Transfer({ onClose, onSuccess, item }: TransferItemProps) {
+export default function Transfer({
+  onClose,
+  onSuccess,
+  item,
+}: TransferItemProps) {
   const token = useAuthStore((state) => state.token);
   const addAlert = useAlertStore((state) => state.addAlert);
   const [loading, setLoading] = useState(false);
@@ -32,7 +36,9 @@ export default function Transfer({ onClose, onSuccess, item }: TransferItemProps
   const { warehouses } = useWarehouses();
 
   const availableAtSource = useMemo(() => {
-    return item.stock.find((s) => s.warehouseId === fromWarehouseId)?.quantity ?? 0;
+    return (
+      item.stock.find((s) => s.warehouseId === fromWarehouseId)?.quantity ?? 0
+    );
   }, [item.stock, fromWarehouseId]);
 
   const isValid =
@@ -61,7 +67,7 @@ export default function Transfer({ onClose, onSuccess, item }: TransferItemProps
         body: JSON.stringify(data),
       });
       const result = await res.json();
-      console.log(result)
+      console.log(result);
       onSuccess();
       onClose();
     } catch (err) {
@@ -135,7 +141,22 @@ export default function Transfer({ onClose, onSuccess, item }: TransferItemProps
           size="small"
           label="Quantity"
           value={quantity}
-          onChange={(e) => setQuantity(Number(e.target.value))}
+          onKeyDown={(e) => {
+            if (e.key === "-" || e.key === "e") {
+              e.preventDefault();
+            }
+          }}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val === "") {
+              setQuantity(0);
+            } else {
+              setQuantity(Math.max(0, Number(val)));
+            }
+          }}
+          slotProps={{
+            htmlInput: { min: 0 },
+          }}
         />
 
         {error && (

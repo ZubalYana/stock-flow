@@ -34,7 +34,7 @@ model Warehouse {
 
 model Inventory {
   warehouseId String 
-  warehouse Warehouse @relation(fields: [warehouseId], references: [id])
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
   itemId String 
   item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
   quantity Int

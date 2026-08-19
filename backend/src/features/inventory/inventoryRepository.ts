@@ -35,10 +35,10 @@ export const inventoryRepository = {
     client: Prisma.TransactionClient,
     warehouseId: string
   ) {
-    return await client.inventory.findMany({ where: { warehouseId } });
+    return await client.inventory.findMany({ where: { warehouseId }, include: { warehouse: true, item: true} });
   },
   async getAllByItem(client: Prisma.TransactionClient, itemId: string) {
-    return await client.inventory.findMany({ where: { itemId } });
+    return await client.inventory.findMany({ where: { itemId }, include: { warehouse: true, item: true}});
   },
   async getAll(client: Prisma.TransactionClient) {
     return await client.inventory.findMany({include: {item: true, warehouse: true}});

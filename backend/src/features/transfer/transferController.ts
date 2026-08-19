@@ -1,5 +1,6 @@
 import { transferService } from "./transferService";
-import type { Request, Response } from "express";
+import type { Request, Response } from "express"; 
+import { broadcastInventoryUpdate } from "../../websocket/wss";
 
 export const transfer = async (req: Request, res: Response) => {
   try {
@@ -14,6 +15,7 @@ export const transfer = async (req: Request, res: Response) => {
         amount
     }
     const result = await transferService.transfer(data);
+    broadcastInventoryUpdate(result)
     if('error' in result){
         return res.status(400).json(result)
     }

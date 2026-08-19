@@ -80,7 +80,7 @@ export default function GoodsPage() {
   useEffect(() => {
     const unsubscribe = useWebSocketStore.getState().subscribe((result) => {
       if (!result.success) return;
-      setItems((prev) => prev.map((item) => updateItemStock(item, result)));
+      fetchGoods();
     });
     return unsubscribe;
   }, []);

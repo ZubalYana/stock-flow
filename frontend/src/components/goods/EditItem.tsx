@@ -1,4 +1,4 @@
-interface CreateItemProps {
+interface EditItemProps {
   onClose: () => void;
   onSuccess: () => void;
   itemId: string;
@@ -11,7 +11,7 @@ import { apiFetch } from "../../api/apiFetch";
 import { useAuthStore } from "../../store/authStore";
 import { useAlertStore } from "../../store/alertStore";
 
-export default function EditItem({ onClose, onSuccess, itemId, itemOldName }: CreateItemProps) {
+export default function EditItem({ onClose, onSuccess, itemId, itemOldName }: EditItemProps) {
   const token = useAuthStore((state) => state.token);
   const addAlert = useAlertStore((state) => state.addAlert);
   const [itemName, setItemName] = useState("");
@@ -44,7 +44,6 @@ export default function EditItem({ onClose, onSuccess, itemId, itemOldName }: Cr
         addAlert({severity:'error', message: message})
     }finally{
         setLoading(false);
-        setError('')
     }
   }
 
@@ -74,11 +73,8 @@ export default function EditItem({ onClose, onSuccess, itemId, itemOldName }: Cr
           size="small"
         />
 
-        {loading && (
-          <p className="text-sm text-slate-400">Loading warehouses...</p>
-        )}
         {error && (
-          <p className="text-sm text-red-500">Failed to load warehouses.</p>
+          <p className="text-sm text-red-500">An error occured: {error}.</p>
         )}
 
       </div>
@@ -87,7 +83,7 @@ export default function EditItem({ onClose, onSuccess, itemId, itemOldName }: Cr
         <Button onClick={onClose} color="inherit">
           Cancel
         </Button>
-        <Button onClick={edit} variant="contained" disableElevation>
+        <Button onClick={edit} variant="contained" disableElevation loading={loading}>
           Confirm changes
         </Button>
       </div>

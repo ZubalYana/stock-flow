@@ -7,12 +7,14 @@ import CreateItem from "./CreateItem";
 import { Button } from "@mui/material";
 import ItemCard from "./ItemCard";
 import EditItem from "./EditItem";
+import Transfer from "./Transfer";
 
 export default function GoodsPage() {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [creationMode, setCreationMode] = useState<boolean>(false);
   const [editingMode, setEditingMode] = useState<boolean>(false);
+  const [transferMode, setTransferMode] = useState<Item | null>(null);
   const [editingItem, setEditingItem] = useState<{
     itemId: string;
     itemName: string;
@@ -92,6 +94,7 @@ export default function GoodsPage() {
                 setEditingItem({ itemId, itemName });
                 setEditingMode(true);
               }}
+              onTransfer={(item)=>setTransferMode(item)}
             />
           ))}
         </div>
@@ -128,6 +131,22 @@ export default function GoodsPage() {
             }}
             itemId={editingItem.itemId}
             itemOldName={editingItem.itemName}
+          />
+        </div>
+      )}
+      {transferMode && (
+        <div
+          className="fixed inset-0 bg-slate-800/40 flex items-center justify-center z-50"
+          onClick={() => setTransferMode(null)}
+        >
+          <Transfer
+            onClose={() => setTransferMode(null)}
+            onSuccess={() => {
+              fetchGoods();
+              addAlert({ severity: "success", message: "Stock transfer successfull" });
+              setTransferMode(null)
+            }}
+            item={transferMode}
           />
         </div>
       )}

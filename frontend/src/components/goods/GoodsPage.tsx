@@ -3,6 +3,7 @@ import type { Item } from "../../types";
 import { apiFetch } from "../../api/apiFetch";
 import { useAuthStore } from "../../store/authStore";
 import { useAlertStore } from "../../store/alertStore";
+import { useWebSocketStore } from "../../store/websocketStore";
 import CreateItem from "./CreateItem";
 import { Button } from "@mui/material";
 import ItemCard from "./ItemCard";
@@ -60,9 +61,42 @@ export default function GoodsPage() {
     }
   }
 
+  function updateItemStock(item: Item, result: any): Item {
+    if (item.id !== result.itemId) return item;
+    const newStock = item.stock.map((s) => {
+      if (s.warehouseId === result.from)
+        return { ...s, quantity: s.quantity - result.amount };
+      if (s.warehouseId === result.to)
+        return { ...s, quantity: s.quantity + result.amount };
+      return s;
+    });
+    return { ...item, stock: newStock };
+  }
+
   useEffect(() => {
     fetchGoods();
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = useWebSocketStore.getState().subscribe((result) => {
+      if (!result.success) return;
+      setItems((prev) => prev.map((item) => updateItemStock(item, result)));
+    });
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    const status = useWebSocketStore.getState().status;
+    if (status !== "open" || items.length === 0) return;
+    const warehouseIds = new Set(
+      items.flatMap((item) => item.stock.map((s) => s.warehouseId))
+    );
+    warehouseIds.forEach((id) =>
+      useWebSocketStore
+        .getState()
+        .send({ type: "WATCH_WAREHOUSE", warehouseId: id })
+    );
+  }, [items.length, useWebSocketStore((s) => s.status)]);
 
   return (
     <div className="w-full">
@@ -90,14 +124,14 @@ export default function GoodsPage() {
               key={item.id}
               item={item}
               onDelete={(itemId, itemName) => {
-                onDelete(itemId, itemName)
+                onDelete(itemId, itemName);
                 setItems((prev) => prev.filter((d) => d.id !== itemId));
               }}
               onEdit={(itemId, itemName) => {
                 setEditingItem({ itemId, itemName });
                 setEditingMode(true);
               }}
-              onTransfer={(item)=>setTransferMode(item)}
+              onTransfer={(item) => setTransferMode(item)}
             />
           ))}
         </div>
@@ -130,7 +164,7 @@ export default function GoodsPage() {
             onSuccess={() => {
               fetchGoods();
               addAlert({ severity: "success", message: "Item name edited." });
-              setEditingItem({itemId: '', itemName: ''})
+              setEditingItem({ itemId: "", itemName: "" });
             }}
             itemId={editingItem.itemId}
             itemOldName={editingItem.itemName}
@@ -146,8 +180,11 @@ export default function GoodsPage() {
             onClose={() => setTransferMode(null)}
             onSuccess={() => {
               fetchGoods();
-              addAlert({ severity: "success", message: "Stock transfer successfull" });
-              setTransferMode(null)
+              addAlert({
+                severity: "success",
+                message: "Stock transfer successfull",
+              });
+              setTransferMode(null);
             }}
             item={transferMode}
           />

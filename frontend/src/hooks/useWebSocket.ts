@@ -1,18 +1,18 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useAuthStore } from "../store/authStore";
 
-type Operator = { id: string; email: string };
-type Status = "connecting" | "open" | "closed";
 
 interface UseWebSocketOptions {
   warehouseId: string | null;
   onInventoryUpdated?: (result: unknown) => void;
 }
 
+import { useWebSocketStore } from "../store/websocketStore";
+
 export function useWebSocket({ warehouseId, onInventoryUpdated }: UseWebSocketOptions) {
   const token = useAuthStore((state) => state.token);
-  const [status, setStatus] = useState<Status>("connecting");
-  const [operators, setOperators] = useState<Operator[]>([]);
+  const setStatus = useWebSocketStore((s) => s.setStatus);
+  const setOperators = useWebSocketStore((s) => s.setOperators);
   const socketRef = useRef<WebSocket | null>(null);
 
   const onInventoryUpdatedRef = useRef(onInventoryUpdated);
@@ -26,7 +26,7 @@ export function useWebSocket({ warehouseId, onInventoryUpdated }: UseWebSocketOp
 
   useEffect(() => {
     if (!token) return;
-
+    console.log("WS URL:", import.meta.env.VITE_WS_URL);
     const socket = new WebSocket(import.meta.env.VITE_WS_URL);
     socketRef.current = socket;
     setStatus("connecting");
@@ -64,5 +64,5 @@ export function useWebSocket({ warehouseId, onInventoryUpdated }: UseWebSocketOp
     };
   }, [token, warehouseId]);
 
-  return { status, operators, send };
+  return { send };
 }

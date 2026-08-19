@@ -35,13 +35,21 @@ export const inventoryRepository = {
     client: Prisma.TransactionClient,
     warehouseId: string
   ) {
-    return await client.inventory.findMany({ where: { warehouseId }, include: { warehouse: true, item: true} });
+    return await client.inventory.findMany({
+      where: { warehouseId },
+      include: { warehouse: true, item: true },
+    });
   },
   async getAllByItem(client: Prisma.TransactionClient, itemId: string) {
-    return await client.inventory.findMany({ where: { itemId }, include: { warehouse: true, item: true}});
+    return await client.inventory.findMany({
+      where: { itemId },
+      include: { warehouse: true, item: true },
+    });
   },
   async getAll(client: Prisma.TransactionClient) {
-    return await client.inventory.findMany({include: {item: true, warehouse: true}});
+    return await client.inventory.findMany({
+      include: { item: true, warehouse: true },
+    });
   },
   async decrementIfSufficient(
     client: Prisma.TransactionClient,
@@ -66,14 +74,10 @@ export const inventoryRepository = {
     warehouseId: string,
     amount: number
   ) {
-    return await client.inventory.updateMany({
-      where: {
-        warehouseId,
-        itemId,
-      },
-      data: {
-        quantity: { increment: amount },
-      },
+    return await client.inventory.upsert({
+      where: { warehouseId_itemId: { warehouseId, itemId } },
+      update: { quantity: { increment: amount } },
+      create: { warehouseId, itemId, quantity: amount },
     });
   },
 };

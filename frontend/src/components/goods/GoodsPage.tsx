@@ -23,7 +23,6 @@ export default function GoodsPage() {
             });
             const data = await res.json();
             setItems(data.result);
-            console.log('items data.result:', data.result)
         } catch (err) {
             const message = err instanceof Error ? err.message : 'Failed to load items.';
             addAlert({ severity: 'error', message });

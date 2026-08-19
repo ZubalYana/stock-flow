@@ -23,6 +23,7 @@ export default function useWarehouses() {
 
                 const data = await res.json();
                 setWarehouses(data);
+                console.log('warehouses data:', data)
                 setError(null);
             } catch (err: any) {
                 console.error(err);

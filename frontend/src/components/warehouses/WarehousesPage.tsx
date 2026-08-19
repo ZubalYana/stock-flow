@@ -1,4 +1,3 @@
-// WarehousesPage.tsx
 import { useState, useEffect } from 'react';
 import { useAlertStore } from '../../store/alertStore';
 import CreateWarehouse from './CreateWarehouse';
